@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "743358209822",
+    "project_id": "vaultanimegetx",
+    "storage_bucket": "vaultanimegetx.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:743358209822:android:dbf291303639a9ca79330f",
+        "android_client_info": {
+          "package_name": "com.example.vault_anime"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "743358209822-d42sc2bsgg1r49opsi9ihs5kkf5gncfg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.vault_anime",
+            "certificate_hash": "3fd752b3a45a2af2943590c030b37373f6a167c7"
+          }
+        },
+        {
+          "client_id": "743358209822-32fesaif6ctf276d2psng293nlhh94r6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCsFJXX0qmm9CMfUxRhb85Gflmb3-trZPQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "743358209822-32fesaif6ctf276d2psng293nlhh94r6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
