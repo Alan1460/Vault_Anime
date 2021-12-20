@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:paginas/controller/auth_controller.dart';
 import 'package:paginas/controller/chat_controller.dart';
 import 'package:paginas/controller/firestore_controller.dart';
+import 'package:paginas/controller/user_controller.dart';
 import 'firebase_central.dart';
 
 
@@ -13,6 +14,7 @@ class MyApp extends StatelessWidget {
   MyApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(UserController());
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Vault Anime",
@@ -21,6 +23,19 @@ class MyApp extends StatelessWidget {
       ),
     
       home: Scaffold(
+        appBar: AppBar(
+        actions: [
+          IconButton(
+              onPressed: () async {
+                try {
+                  await controller.getUser();
+                } on Exception catch (e) {
+                  Get.snackbar("Error", e.toString());
+                }
+              },
+              icon: const Icon(Icons.add)),
+        ],
+      ),
           body: FutureBuilder(
         future: _initialization,
         builder: (context, snapshot) {

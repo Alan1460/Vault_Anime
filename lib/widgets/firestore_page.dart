@@ -1,91 +1,110 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:paginas/controller/firestore_controller.dart';
-import 'package:paginas/data/model/record.dart';
-import 'package:prompt_dialog/prompt_dialog.dart';
+import 'package:paginas/controller/user_controller.dart';
+import 'package:shimmer/shimmer.dart';
 
-class FireStorePage extends StatefulWidget {
-  const FireStorePage({Key? key}) : super(key: key);
 
-  @override
-  State<FireStorePage> createState() => _FireStorePageState();
-}
-
-class _FireStorePageState extends State<FireStorePage> {
-  final FirebaseController firebaseController = Get.find();
-
-  @override
-  void initState() {
-    firebaseController.suscribeUpdates();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    firebaseController.unsuscribeUpdates();
-    super.dispose();
-  }
+class FireStorepage extends StatelessWidget {
+  const FireStorepage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Obx(
-          () => ListView.builder(
-              itemCount: firebaseController.entries.length,
-              padding: const EdgeInsets.only(top: 20.0),
-              itemBuilder: (BuildContext context, int index) {
-                return _buildItem(context, firebaseController.entries[index]);
-              }),
-        ),
-        floatingActionButton: FloatingActionButton(
-          child: const Icon(Icons.add),
-          onPressed: () {
-            addBaby(context);
-          },
-        ));
-  }
+    final controller = Get.put(UserController());
 
-  Widget _buildItem(BuildContext context, Record record) {
-    return Padding(
-      key: ValueKey(record.name),
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey),
-          borderRadius: BorderRadius.circular(5.0),
-        ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Vault Anime'),
+        actions: [
+          IconButton(
+              onPressed: () async {
+                try {
+                  await controller.getUser();
+                } on Exception catch (e) {
+                  Get.snackbar("Error", e.toString());
+                }
+              },
+              icon: const Icon(Icons.add)),
+        ],
+      ),
+      body: Obx(() {
+        var itemCount = controller.users.length;
+        final isLoading = controller.loading.value;
+        if (isLoading) itemCount++;
+
+        return ListView.builder(
+          itemCount: itemCount,
+          itemBuilder: (_, index) {
+            if (isLoading) {
+              if (index == 0) return _LoadingCard();
+              index--;
+            }
+            final user = controller.users[index];
+            return Card(
+              child: ListTile(
+                leading: SizedBox(
+                  height: 70,
+                  width: 70,
+                  child: user.thumbnail == null
+                      ? const Icon(Icons.image)
+                      : CachedNetworkImage(
+                          imageUrl: user.thumbnail!,
+                          progressIndicatorBuilder: (_, __, ___) => _ImageLoading(),
+                          errorWidget: (_, __, ___) => const Icon(Icons.error),
+                          fit: BoxFit.fitHeight,
+                        ),
+                ),
+                title: Text('${user.name} ${user.lastName}'),
+                subtitle: Text(user.city),
+                trailing: IconButton(
+                  onPressed: () => controller.deleteUser(user),
+                  icon: const Icon(Icons.delete),
+                ),
+              ),
+            );
+          },
+        );
+      }),
+    );
+  }
+}
+
+class _LoadingCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey[400]!,
+        highlightColor: Colors.grey[300]!,
+        enabled: true,
         child: ListTile(
-          title: Text(record.name),
-          trailing: Text(record.votes.toString()),
-          onTap: () => firebaseController.updateEntry(record),
-          onLongPress: () => firebaseController.deleteEntry(record),
+          leading: _ImageLoading(),
+          title: Container(
+            height: 15,
+            color: Colors.white,
+          ),
+          subtitle: Container(
+            height: 15,
+            color: Colors.white,
+          ),
         ),
       ),
     );
   }
+}
 
-  Future<void> addBaby(BuildContext context) async {
-    getName(context).then((value) {
-      firebaseController.addEntry(value);
-    });
-  }
-
-  Future<String> getName(BuildContext context) async {
-    String? result = await prompt(
-      context,
-      title: const Text('Adding a baby'),
-      initialValue: '',
-      textOK: const Text('Ok'),
-      textCancel: const Text('Cancel'),
-      hintText: 'Baby name',
-      minLines: 1,
-      autoFocus: true,
-      obscureText: false,
-      textCapitalization: TextCapitalization.words,
+class _ImageLoading extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[400]!,
+      highlightColor: Colors.grey[300]!,
+      enabled: true,
+      child: Container(
+        height: 70,
+        width: 70,
+        color: Colors.white,
+      ),
     );
-    if (result != null) {
-      return Future.value(result);
-    }
-    return Future.error('cancel');
   }
 }

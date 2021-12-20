@@ -15,7 +15,7 @@ class _HomePageState extends State<HomePage> {
 
   int _selectIndex = 0;
   AuthController authController = Get.find();
-  static final List<Widget> _widgets = <Widget>[const FireStorePage(), const ChatPage()];
+  static final List<Widget> _widgets = <Widget>[const FireStorepage(), const ChatPage()];
 
   _onItemTapped(int index) {
     setState(() {

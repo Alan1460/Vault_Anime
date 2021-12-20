@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:get/get.dart';
 import 'package:paginas/controller/auth_controller.dart';
 import 'package:paginas/page/crear_nuevo_usuario.dart';
 import 'package:paginas/pallete.dart';
